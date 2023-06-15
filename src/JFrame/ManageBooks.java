@@ -389,7 +389,7 @@ public class ManageBooks extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Book ID", "Book Name", "Author Name", "Quantity"
+                "Book ID", "Title", "Author", "Quantity"
             }
         ));
         tbl_bookdetails.setColorBackgoundHead(new java.awt.Color(0, 0, 0));

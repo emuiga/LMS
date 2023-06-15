@@ -16,21 +16,25 @@ import javax.swing.JOptionPane;
  */
 public class IssueBook extends javax.swing.JFrame {
 
+//    private int patronId;
+//    private int bookId;
+
     /**
      * Creates new form IssueBook
      */
+    int bookId,patronId;
     public IssueBook() {
         initComponents();
     }
     //fetch book details from book details table and display
     public void getBookDetails(){
-        int book_id = Integer.parseInt(var_bookId.getText());
+        String book_name = var_bookname.getText();
         
         try{
             Connection con = DBConnection.getConnection();
             
-            PreparedStatement prepst = con.prepareStatement("select * from book_details where book_id = ?");
-            prepst.setInt(1, book_id);
+            PreparedStatement prepst = con.prepareStatement("select * from book_details where book_name = ?");
+            prepst.setString(1, book_name);
             ResultSet rs = prepst.executeQuery();
             
             if(rs.next()){
@@ -39,7 +43,7 @@ public class IssueBook extends javax.swing.JFrame {
                 lbl_author.setText(rs.getString("book_author"));
                 lbl_quantity.setText(rs.getString("quantity"));
             }else{
-                lbl_bookError.setText("Invalid Book ID");
+                lbl_bookError.setText("Invalid Name");
             }
         }catch(Exception e){
             e.printStackTrace();
@@ -47,18 +51,18 @@ public class IssueBook extends javax.swing.JFrame {
     }
     
     public void getPatronDetails(){
-        int patronId = Integer.parseInt(var_patronId.getText());
+        String patron_name = var_patronname.getText();
         
         try{
             Connection con = DBConnection.getConnection();
             
-            PreparedStatement prepst = con.prepareStatement("select * from patron_details where patronId = ?");
-            prepst.setInt(1, patronId);
+            PreparedStatement prepst = con.prepareStatement("select * from patron_details where patron_name = ?");
+            prepst.setString(1, patron_name);
             ResultSet rs = prepst.executeQuery();
             
             if(rs.next()){
-                lbl_patronId.setText(rs.getString("patronId"));
                 lbl_patronName.setText(rs.getString("patron_name"));
+                lbl_patronId.setText(rs.getString("patronId"));
                 lbl_contact.setText(rs.getString("contact"));
                 lbl_position.setText(rs.getString("position"));
             }else{
@@ -71,10 +75,12 @@ public class IssueBook extends javax.swing.JFrame {
     
     public boolean issueBook(){
         boolean isIssued = false;
-        int bookId =Integer.parseInt(var_bookId.getText());
-        int patronId =Integer.parseInt(var_patronId.getText());
-        String book_name =lbl_bookName.getText();
-        String patron_name =lbl_patronName.getText();
+//        int bookId =Integer.parseInt(var_bookid.getText());
+//        int patronId =Integer.parseInt(var_patronId.getText());
+        String book_name =var_bookname.getText();
+        String patron_name =var_patronname.getText();
+        book_name =lbl_bookName.getText();
+        patron_name =lbl_patronName.getText();
         
         Date uIssueDate = date_returnDate.getDate();
         Date uDueDate = date_returnDate.getDate();
@@ -87,12 +93,12 @@ public class IssueBook extends javax.swing.JFrame {
 
         try{
             Connection con = DBConnection.getConnection();
-            String sql = "insert into issue_book_details(book_id,book_name,patronId,patron_name,issue_date,due_date,status) values(?,?,?,?,?,?,?)";
+            String sql = "insert into issue_book_details(book_name,patron_name,patronId,book_id,issue_date,due_date,status) values(?,?,?,?,?,?,?)";
             PreparedStatement prepst = con.prepareStatement(sql);
-            prepst.setInt(1, bookId);
-            prepst.setString(2,book_name);
+            prepst.setString(1,book_name);
+            prepst.setString(2,patron_name);
             prepst.setInt(3, patronId);
-            prepst.setString(4,patron_name);
+            prepst.setInt(4, bookId);
             prepst.setDate(5,sIssueDate);
             prepst.setDate(6,sDueDate);
             prepst.setString(7,"pending");
@@ -111,12 +117,12 @@ public class IssueBook extends javax.swing.JFrame {
     
     //update book count
     public void updateBookCount(){
-        int bookId = Integer.parseInt(var_bookId.getText());
+        String book_name = var_bookname.getText();
         try {
             Connection con = DBConnection.getConnection();
-            String sql = "update book_details set quantity = quantity - 1 where book_id = ?";
+            String sql = "update book_details set quantity = quantity - 1 where book_name = ?";
             PreparedStatement prepst = con.prepareStatement(sql);
-            prepst.setInt(1, bookId);
+            prepst.setString(1, book_name);
             
             
             int rowCount = prepst.executeUpdate();
@@ -135,15 +141,15 @@ public class IssueBook extends javax.swing.JFrame {
     //check whether book already allocated
     public boolean alreadyIssued(){
         boolean isAlreadyIssued = false;
-        int bookId =Integer.parseInt(var_bookId.getText());
-        int patronId =Integer.parseInt(var_patronId.getText());
+        String book_name =var_bookname.getText();
+        String patron_name =var_patronname.getText();
         
         try{
             Connection con = DBConnection.getConnection();
-            String sql = "select * from issue_book_details where book_id = ? and patronId = ? and status = ?";
+            String sql = "select * from issue_book_details where book_name = ? and patron_name = ? and status = ?";
             PreparedStatement prepst = con.prepareStatement(sql);
-            prepst.setInt(1,bookId);
-            prepst.setInt(2,patronId);
+            prepst.setString(1,book_name);
+            prepst.setString(2,patron_name);
             prepst.setString(3,"pending");
             
             ResultSet rs = prepst.executeQuery();
@@ -201,8 +207,8 @@ public class IssueBook extends javax.swing.JFrame {
         jLabel14 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
-        var_bookId = new app.bolivia.swing.JCTextField();
-        var_patronId = new app.bolivia.swing.JCTextField();
+        var_bookname = new app.bolivia.swing.JCTextField();
+        var_patronname = new app.bolivia.swing.JCTextField();
         jLabel20 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
         rSMaterialButtonCircle1 = new rojerusan.RSMaterialButtonCircle();
@@ -379,49 +385,49 @@ public class IssueBook extends javax.swing.JFrame {
 
         jLabel9.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(0, 102, 0));
-        jLabel9.setText("    Patron ID  :");
-        panel_main.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 350, 130, -1));
+        jLabel9.setText(" Patron Name  :");
+        panel_main.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 350, 150, -1));
 
         jLabel19.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
         jLabel19.setForeground(new java.awt.Color(0, 102, 0));
-        jLabel19.setText("  Due Date :");
+        jLabel19.setText("Due Date :");
         panel_main.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 490, 110, 20));
 
-        var_bookId.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 102, 0)));
-        var_bookId.setFont(new java.awt.Font("Microsoft JhengHei UI", 0, 14)); // NOI18N
-        var_bookId.setPhColor(new java.awt.Color(0, 102, 0));
-        var_bookId.setPlaceholder("Book Id...");
-        var_bookId.addFocusListener(new java.awt.event.FocusAdapter() {
+        var_bookname.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 102, 0)));
+        var_bookname.setFont(new java.awt.Font("Microsoft JhengHei UI", 0, 14)); // NOI18N
+        var_bookname.setPhColor(new java.awt.Color(0, 102, 0));
+        var_bookname.setPlaceholder("Enter Title...");
+        var_bookname.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
-                var_bookIdFocusLost(evt);
+                var_booknameFocusLost(evt);
             }
         });
-        panel_main.add(var_bookId, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 270, 220, -1));
+        panel_main.add(var_bookname, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 270, 220, -1));
 
-        var_patronId.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 102, 0)));
-        var_patronId.setFont(new java.awt.Font("Microsoft JhengHei UI", 0, 14)); // NOI18N
-        var_patronId.setPhColor(new java.awt.Color(0, 102, 0));
-        var_patronId.setPlaceholder("Patron Id...");
-        var_patronId.addFocusListener(new java.awt.event.FocusAdapter() {
+        var_patronname.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 102, 0)));
+        var_patronname.setFont(new java.awt.Font("Microsoft JhengHei UI", 0, 14)); // NOI18N
+        var_patronname.setPhColor(new java.awt.Color(0, 102, 0));
+        var_patronname.setPlaceholder("Borrower...");
+        var_patronname.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
-                var_patronIdFocusLost(evt);
+                var_patronnameFocusLost(evt);
             }
         });
-        var_patronId.addActionListener(new java.awt.event.ActionListener() {
+        var_patronname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                var_patronIdActionPerformed(evt);
+                var_patronnameActionPerformed(evt);
             }
         });
-        panel_main.add(var_patronId, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 340, 220, -1));
+        panel_main.add(var_patronname, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 340, 220, -1));
 
         jLabel20.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
         jLabel20.setForeground(new java.awt.Color(0, 102, 0));
-        jLabel20.setText("    Book ID  :");
+        jLabel20.setText("Book Title :");
         panel_main.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 280, 120, -1));
 
         jLabel21.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
         jLabel21.setForeground(new java.awt.Color(0, 102, 0));
-        jLabel21.setText("  Issue Date :");
+        jLabel21.setText("Issue Date :");
         panel_main.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 420, 130, -1));
 
         rSMaterialButtonCircle1.setBackground(new java.awt.Color(255, 153, 51));
@@ -484,25 +490,25 @@ public class IssueBook extends javax.swing.JFrame {
         
     }//GEN-LAST:event_rSMaterialButtonCircle1ActionPerformed
 
-    private void var_patronIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_var_patronIdActionPerformed
+    private void var_patronnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_var_patronnameActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_var_patronIdActionPerformed
+    }//GEN-LAST:event_var_patronnameActionPerformed
 
-    private void var_patronIdFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_var_patronIdFocusLost
-        if (!var_patronId.getText().equals("")){
+    private void var_patronnameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_var_patronnameFocusLost
+        if (!var_patronname.getText().equals("")){
         getPatronDetails();
         }
-    }//GEN-LAST:event_var_patronIdFocusLost
+    }//GEN-LAST:event_var_patronnameFocusLost
 
     private void jLabel18MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MouseClicked
         System.exit(0);
     }//GEN-LAST:event_jLabel18MouseClicked
 
-    private void var_bookIdFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_var_bookIdFocusLost
-        if (!var_bookId.getText().equals("")){
+    private void var_booknameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_var_booknameFocusLost
+        if (!var_bookname.getText().equals("")){
         getBookDetails();
         }
-    }//GEN-LAST:event_var_bookIdFocusLost
+    }//GEN-LAST:event_var_booknameFocusLost
 
     /**
      * @param args the command line arguments
@@ -579,7 +585,7 @@ public class IssueBook extends javax.swing.JFrame {
     private javax.swing.JLabel lbl_quantity;
     private javax.swing.JPanel panel_main;
     private rojerusan.RSMaterialButtonCircle rSMaterialButtonCircle1;
-    private app.bolivia.swing.JCTextField var_bookId;
-    private app.bolivia.swing.JCTextField var_patronId;
+    private app.bolivia.swing.JCTextField var_bookname;
+    private app.bolivia.swing.JCTextField var_patronname;
     // End of variables declaration//GEN-END:variables
 }

@@ -10,11 +10,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import net.proteanit.sql.DbUtils;
-import javax.swing.table.TableModel;
 
 
 /**
@@ -23,9 +21,12 @@ import javax.swing.table.TableModel;
  */
 public class ReturnBook extends javax.swing.JFrame {
 
+
     /**
      * Creates new form ReturnBook
      */
+    
+    DefaultTableModel model;
     public ReturnBook() {
         initComponents();
     }
