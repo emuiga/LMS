@@ -1,0 +1,523 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package JFrame;
+
+import static JFrame.DBConnection.con;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
+import javax.swing.table.TableModel;
+
+/**
+ *
+ * @author muiga
+ */
+public class ManageVisitors extends javax.swing.JFrame {
+
+    /**
+     * Creates new form ManageVisitors
+     */
+    String patronname, position;
+    int patroncontact, patronId;
+    DefaultTableModel model;
+    public ManageVisitors() {
+        initComponents();
+        displayPatronDetails();
+    }
+
+    public void displayPatronDetails(){
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/nca_lmsdb","root","");
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("select * from patron_details");
+            
+            while(rs.next()){
+                String patronId = rs.getString("patronId");
+                String patronname = rs.getString("patron_name");
+                String patroncontact = rs.getString("contact");
+                String position = rs.getString("position");
+                
+                Object[] obj = {patronId,patronname,patroncontact,position};
+                model =(DefaultTableModel) tbl_patrondetails.getModel();//typecast
+                model.addRow(obj);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    //to add new borrower
+    public boolean addPatron(){
+        
+        boolean isAdded = false;
+        patronId = Integer.parseInt(var_patronId.getText());
+        patronname = var_patronname.getText();
+        patroncontact = Integer.parseInt(var_patroncontact.getText());
+        position = combo_position.getSelectedItem().toString();
+       
+        try{
+            Connection con = DBConnection.getConnection();
+            String sql = "insert into patron_details values(?,?,?,?)";
+            PreparedStatement prepst = con.prepareStatement(sql);
+            prepst.setInt(1, patronId);
+            prepst.setString(2, patronname);
+            prepst.setInt(3, patroncontact);
+            prepst.setString(4, position);
+            
+            int rowCount = prepst.executeUpdate();
+            if (rowCount > 0) {
+                isAdded = true;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return isAdded;
+    }
+    
+    public boolean updatePatron(){
+        boolean isUpdated = false;
+        patronId = Integer.parseInt(var_patronId.getText());
+        patronname = var_patronname.getText();
+        patroncontact = Integer.parseInt(var_patroncontact.getText());
+        position = combo_position.getSelectedItem().toString();
+        
+        try {
+            Connection con = DBConnection.getConnection();
+            String sql = "Update patron_details set patronId = ?, patron_name = ?, contact = ?, position = ? where patronId = ?";
+            PreparedStatement prepst = con.prepareStatement(sql);
+            prepst.setInt(1, patronId);
+            prepst.setString(2, patronname);
+            prepst.setInt(3 ,patroncontact);
+            prepst.setString(4,position);
+            
+            int rowCount = prepst.executeUpdate();
+            if (rowCount > 0){
+                isUpdated = true;
+            }else{
+                isUpdated = false;
+            }     
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return isUpdated;
+    }
+    
+    public boolean deletePatron(){
+        boolean isDeleted = false;
+        patronId = Integer.parseInt(var_patronId.getText());
+        
+        try{
+            Connection con = DBConnection.getConnection();
+            String sql = "delete from patron_details where patronId = ? ";
+            PreparedStatement prepst = con.prepareStatement(sql);
+            prepst.setInt(1, patronId);
+            
+            int rowCount = prepst.executeUpdate();
+            if (rowCount > 0){
+                isDeleted = true;
+            }else{
+                isDeleted = false;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return isDeleted;
+    }
+    
+    public void clearTable(){
+        DefaultTableModel model= (DefaultTableModel) tbl_patrondetails.getModel();
+        model.setRowCount(0);
+    }
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        var_patronname = new app.bolivia.swing.JCTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        var_patroncontact = new app.bolivia.swing.JCTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        rSMaterialButtonCircle3 = new rojerusan.RSMaterialButtonCircle();
+        rSMaterialButtonCircle2 = new rojerusan.RSMaterialButtonCircle();
+        rSMaterialButtonCircle1 = new rojerusan.RSMaterialButtonCircle();
+        combo_position = new javax.swing.JComboBox<>();
+        var_patronId = new app.bolivia.swing.JCTextField();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbl_patrondetails = new rojeru_san.complementos.RSTableMetro();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(1180, 700));
+        setUndecorated(true);
+        setPreferredSize(new java.awt.Dimension(1180, 700));
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel2.setBackground(new java.awt.Color(0, 102, 0));
+
+        jPanel3.setBackground(new java.awt.Color(0, 0, 0));
+
+        jLabel2.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 153, 51));
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/AddNewBookIcons/icons8_Rewind_48px.png"))); // NOI18N
+        jLabel2.setText("   Back");
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGap(0, 16, Short.MAX_VALUE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 47, Short.MAX_VALUE)
+        );
+
+        var_patronname.setBackground(new java.awt.Color(0, 102, 0));
+        var_patronname.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(255, 255, 51)));
+        var_patronname.setFont(new java.awt.Font("Microsoft JhengHei UI", 0, 14)); // NOI18N
+        var_patronname.setPhColor(new java.awt.Color(255, 255, 51));
+        var_patronname.setPlaceholder("Borrower Name...");
+
+        jLabel3.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Enter Patron Name");
+
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/AddNewBookIcons/icons8_Collaborator_Male_26px.png"))); // NOI18N
+
+        var_patroncontact.setBackground(new java.awt.Color(0, 102, 0));
+        var_patroncontact.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(255, 255, 51)));
+        var_patroncontact.setFont(new java.awt.Font("Microsoft JhengHei UI", 0, 14)); // NOI18N
+        var_patroncontact.setPhColor(new java.awt.Color(255, 255, 51));
+        var_patroncontact.setPlaceholder("Phone No...");
+
+        jLabel5.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Enter Contact");
+
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/AddNewBookIcons/icons8_Moleskine_26px.png"))); // NOI18N
+
+        jLabel7.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setText("Position");
+
+        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/AddNewBookIcons/icons8_Unit_26px.png"))); // NOI18N
+
+        rSMaterialButtonCircle3.setBackground(new java.awt.Color(0, 0, 0));
+        rSMaterialButtonCircle3.setForeground(new java.awt.Color(255, 153, 51));
+        rSMaterialButtonCircle3.setText("ADD");
+        rSMaterialButtonCircle3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rSMaterialButtonCircle3ActionPerformed(evt);
+            }
+        });
+
+        rSMaterialButtonCircle2.setBackground(new java.awt.Color(0, 0, 0));
+        rSMaterialButtonCircle2.setForeground(new java.awt.Color(255, 153, 51));
+        rSMaterialButtonCircle2.setText("DELETE");
+        rSMaterialButtonCircle2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rSMaterialButtonCircle2ActionPerformed(evt);
+            }
+        });
+
+        rSMaterialButtonCircle1.setBackground(new java.awt.Color(0, 0, 0));
+        rSMaterialButtonCircle1.setForeground(new java.awt.Color(255, 153, 51));
+        rSMaterialButtonCircle1.setText("UPDATE");
+        rSMaterialButtonCircle1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rSMaterialButtonCircle1ActionPerformed(evt);
+            }
+        });
+
+        combo_position.setBackground(new java.awt.Color(204, 153, 0));
+        combo_position.setFont(new java.awt.Font("Georgia", 0, 14)); // NOI18N
+        combo_position.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Resident", "Intern", "Attache" }));
+
+        var_patronId.setBackground(new java.awt.Color(0, 102, 0));
+        var_patronId.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(255, 255, 51)));
+        var_patronId.setFont(new java.awt.Font("Microsoft JhengHei UI", 0, 14)); // NOI18N
+        var_patronId.setPhColor(new java.awt.Color(255, 255, 51));
+        var_patronId.setPlaceholder("Borrower Id...");
+
+        jLabel9.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel9.setText("Enter Patron ID");
+
+        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/AddNewBookIcons/icons8_Contact_26px.png"))); // NOI18N
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(46, 46, 46)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel7)
+                                    .addComponent(combo_position, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(var_patroncontact, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(var_patronname, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(var_patronId, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addContainerGap(167, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(rSMaterialButtonCircle3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addComponent(rSMaterialButtonCircle1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addComponent(rSMaterialButtonCircle2, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(74, 74, 74)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addComponent(var_patronId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(32, 32, 32)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addComponent(var_patronname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(var_patroncontact, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(combo_position, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(71, 71, 71)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(rSMaterialButtonCircle3, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rSMaterialButtonCircle2, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rSMaterialButtonCircle1, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 161, Short.MAX_VALUE))
+        );
+
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 520, 820));
+
+        jLabel11.setFont(new java.awt.Font("Georgia", 1, 30)); // NOI18N
+        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/adminIcons/icons8_Read_Online_26px.png"))); // NOI18N
+        jLabel11.setText("Manage Patrons");
+        getContentPane().add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 70, -1, -1));
+
+        tbl_patrondetails.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Borrower ID", "Name ", "Contact", "Position"
+            }
+        ));
+        tbl_patrondetails.setColorBackgoundHead(new java.awt.Color(0, 0, 0));
+        tbl_patrondetails.setColorBordeHead(new java.awt.Color(255, 153, 51));
+        tbl_patrondetails.setColorFilasBackgound2(new java.awt.Color(255, 255, 255));
+        tbl_patrondetails.setColorFilasForeground1(new java.awt.Color(0, 0, 0));
+        tbl_patrondetails.setColorFilasForeground2(new java.awt.Color(0, 0, 0));
+        tbl_patrondetails.setColorForegroundHead(new java.awt.Color(255, 153, 51));
+        tbl_patrondetails.setColorSelBackgound(new java.awt.Color(102, 0, 102));
+        tbl_patrondetails.setColorSelForeground(new java.awt.Color(255, 153, 51));
+        tbl_patrondetails.setRowHeight(40);
+        tbl_patrondetails.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_patrondetailsMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tbl_patrondetails);
+
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 170, 640, 530));
+
+        jLabel12.setFont(new java.awt.Font("Bahnschrift", 0, 24)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(255, 153, 51));
+        jLabel12.setText("   X");
+        jLabel12.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel12MouseClicked(evt);
+            }
+        });
+        getContentPane().add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(1240, 0, 40, -1));
+
+        jLabel1.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel1.setOpaque(true);
+        jLabel1.setPreferredSize(new java.awt.Dimension(5, 15));
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 130, 376, 5));
+
+        setSize(new java.awt.Dimension(1180, 700));
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+        HomePage home = new HomePage();
+        home.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_jLabel2MouseClicked
+
+    private void rSMaterialButtonCircle3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSMaterialButtonCircle3ActionPerformed
+        if (addPatron() == true) {
+            JOptionPane.showMessageDialog(this, "Patron Added");
+            clearTable();
+            displayPatronDetails();
+        }else{
+            JOptionPane.showMessageDialog(this, "Patron Addition Failed");
+        }
+    }//GEN-LAST:event_rSMaterialButtonCircle3ActionPerformed
+
+    private void rSMaterialButtonCircle2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSMaterialButtonCircle2ActionPerformed
+        if (deletePatron() == true) {
+            JOptionPane.showMessageDialog(this, "Patron Deleted");
+            clearTable();
+            displayPatronDetails();
+        }else{
+            JOptionPane.showMessageDialog(this, "Patron Deletion Failed");
+        }
+    }//GEN-LAST:event_rSMaterialButtonCircle2ActionPerformed
+
+    private void rSMaterialButtonCircle1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSMaterialButtonCircle1ActionPerformed
+        if (updatePatron() == true) {
+            JOptionPane.showMessageDialog(this, "Patron Updated");
+            clearTable();
+            displayPatronDetails();
+        }else{
+            JOptionPane.showMessageDialog(this, "Patron Update Failed");
+        }       
+    }//GEN-LAST:event_rSMaterialButtonCircle1ActionPerformed
+
+    private void tbl_patrondetailsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_patrondetailsMouseClicked
+        int rowNumber = tbl_patrondetails.getSelectedRow();
+        TableModel model = tbl_patrondetails.getModel();
+
+        var_patronId.setText(model.getValueAt(rowNumber, 0).toString());
+        var_patronname.setText(model.getValueAt(rowNumber, 1).toString());
+        var_patroncontact.setText(model.getValueAt(rowNumber, 2).toString());
+        combo_position.setSelectedItem(model.getValueAt(rowNumber, 3).toString());
+    }//GEN-LAST:event_tbl_patrondetailsMouseClicked
+
+    private void jLabel12MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MouseClicked
+        System.exit(0);
+    }//GEN-LAST:event_jLabel12MouseClicked
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(ManageVisitors.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(ManageVisitors.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(ManageVisitors.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(ManageVisitors.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable(){
+            public void run() {
+                new ManageVisitors().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> combo_position;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private rojerusan.RSMaterialButtonCircle rSMaterialButtonCircle1;
+    private rojerusan.RSMaterialButtonCircle rSMaterialButtonCircle2;
+    private rojerusan.RSMaterialButtonCircle rSMaterialButtonCircle3;
+    private rojeru_san.complementos.RSTableMetro tbl_patrondetails;
+    private app.bolivia.swing.JCTextField var_patronId;
+    private app.bolivia.swing.JCTextField var_patroncontact;
+    private app.bolivia.swing.JCTextField var_patronname;
+    // End of variables declaration//GEN-END:variables
+}
