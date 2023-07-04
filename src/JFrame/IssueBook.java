@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.util.Date;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 /**
  *
@@ -18,148 +19,150 @@ public class IssueBook extends javax.swing.JFrame {
 
 //    private int patronId;
 //    private int bookId;
-
     /**
      * Creates new form IssueBook
      */
-    int bookId,patronId;
+    int bookId, patronId;
+
     public IssueBook() {
         initComponents();
     }
+
     //fetch book details from book details table and display
-    public void getBookDetails(){
+    public void getBookDetails() {
         String book_name = var_bookname.getText();
-        
-        try{
+
+        try {
             Connection con = DBConnection.getConnection();
-            
+
             PreparedStatement prepst = con.prepareStatement("select * from book_details where book_name = ?");
             prepst.setString(1, book_name);
             ResultSet rs = prepst.executeQuery();
-            
-            if(rs.next()){
+
+            if (rs.next()) {
                 lbl_bookId.setText(rs.getString("book_id"));
                 lbl_bookName.setText(rs.getString("book_name"));
                 lbl_author.setText(rs.getString("book_author"));
                 lbl_quantity.setText(rs.getString("quantity"));
-            }else{
-                lbl_bookError.setText("Invalid Name");
+                lbl_bookError.setText("");
+            } else {
+                lbl_bookError.setText("Invalid Title");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
-    public void getPatronDetails(){
+
+    public void getPatronDetails() {
         String patron_name = var_patronname.getText();
-        
-        try{
+
+        try {
             Connection con = DBConnection.getConnection();
-            
+
             PreparedStatement prepst = con.prepareStatement("select * from patron_details where patron_name = ?");
             prepst.setString(1, patron_name);
             ResultSet rs = prepst.executeQuery();
-            
-            if(rs.next()){
+
+            if (rs.next()) {
                 lbl_patronName.setText(rs.getString("patron_name"));
                 lbl_patronId.setText(rs.getString("patronId"));
                 lbl_contact.setText(rs.getString("contact"));
                 lbl_position.setText(rs.getString("position"));
-            }else{
-                lbl_patronError.setText("Invalid Patron ID");
+                lbl_patronError.setText("");
+            } else {
+                lbl_patronError.setText("Invalid Patron Name");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-        } 
+        }
     }
-    
-    public boolean issueBook(){
+
+    public boolean issueBook() {
         boolean isIssued = false;
 //        int bookId =Integer.parseInt(var_bookid.getText());
 //        int patronId =Integer.parseInt(var_patronId.getText());
-        String book_name =var_bookname.getText();
-        String patron_name =var_patronname.getText();
-        book_name =lbl_bookName.getText();
-        patron_name =lbl_patronName.getText();
-        
+        String book_name = var_bookname.getText();
+        String patron_name = var_patronname.getText();
+        book_name = lbl_bookName.getText();
+        patron_name = lbl_patronName.getText();
+
         Date uIssueDate = date_returnDate.getDate();
         Date uDueDate = date_returnDate.getDate();
-        
+
         Long l1 = uIssueDate.getTime();
         long l2 = uDueDate.getTime();
-        
+
         java.sql.Date sIssueDate = new java.sql.Date(l1);
         java.sql.Date sDueDate = new java.sql.Date(l2);
 
-        try{
+        try {
             Connection con = DBConnection.getConnection();
             String sql = "insert into issue_book_details(book_name,patron_name,patronId,book_id,issue_date,due_date,status) values(?,?,?,?,?,?,?)";
             PreparedStatement prepst = con.prepareStatement(sql);
-            prepst.setString(1,book_name);
-            prepst.setString(2,patron_name);
+            prepst.setString(1, book_name);
+            prepst.setString(2, patron_name);
             prepst.setInt(3, patronId);
             prepst.setInt(4, bookId);
-            prepst.setDate(5,sIssueDate);
-            prepst.setDate(6,sDueDate);
-            prepst.setString(7,"pending");
-            
+            prepst.setDate(5, sIssueDate);
+            prepst.setDate(6, sDueDate);
+            prepst.setString(7, "pending");
+
             int rowCount = prepst.executeUpdate();
             if (rowCount > 0) {
                 isIssued = true;
-            }else{
+            } else {
                 isIssued = false;
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return isIssued;
     }
-    
+
     //update book count
-    public void updateBookCount(){
+    public void updateBookCount() {
         String book_name = var_bookname.getText();
         try {
             Connection con = DBConnection.getConnection();
             String sql = "update book_details set quantity = quantity - 1 where book_name = ?";
             PreparedStatement prepst = con.prepareStatement(sql);
             prepst.setString(1, book_name);
-            
-            
+
             int rowCount = prepst.executeUpdate();
             if (rowCount > 0) {
-                JOptionPane.showMessageDialog(this,"Book Count Updated");
+                JOptionPane.showMessageDialog(this, "Book Count Updated");
                 int initialCount = Integer.parseInt(lbl_quantity.getText());
                 lbl_quantity.setText(Integer.toString(initialCount - 1));
-            }else{
-                JOptionPane.showMessageDialog(this,"Can't Update Book Count");
+            } else {
+                JOptionPane.showMessageDialog(this, "Can't Update Book Count");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-        
+
     //check whether book already allocated
-    public boolean alreadyIssued(){
+    public boolean alreadyIssued() {
         boolean isAlreadyIssued = false;
-        String book_name =var_bookname.getText();
-        String patron_name =var_patronname.getText();
-        
-        try{
+        String book_name = var_bookname.getText();
+        String patron_name = var_patronname.getText();
+
+        try {
             Connection con = DBConnection.getConnection();
             String sql = "select * from issue_book_details where book_name = ? and patron_name = ? and status = ?";
             PreparedStatement prepst = con.prepareStatement(sql);
-            prepst.setString(1,book_name);
-            prepst.setString(2,patron_name);
-            prepst.setString(3,"pending");
-            
+            prepst.setString(1, book_name);
+            prepst.setString(2, patron_name);
+            prepst.setString(3, "pending");
+
             ResultSet rs = prepst.executeQuery();
-            
-            if (rs.next()){
+
+            if (rs.next()) {
                 isAlreadyIssued = true;
-            }else{
+            } else {
                 isAlreadyIssued = false;
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return isAlreadyIssued;
@@ -212,9 +215,8 @@ public class IssueBook extends javax.swing.JFrame {
         jLabel20 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
         rSMaterialButtonCircle1 = new rojerusan.RSMaterialButtonCircle();
-        jLabel18 = new javax.swing.JLabel();
         date_returnDate = new com.toedter.calendar.JDateChooser();
-        date_issueDate1 = new com.toedter.calendar.JDateChooser();
+        date_issueDate = new com.toedter.calendar.JDateChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1180, 700));
@@ -402,6 +404,11 @@ public class IssueBook extends javax.swing.JFrame {
                 var_booknameFocusLost(evt);
             }
         });
+        var_bookname.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                var_booknameActionPerformed(evt);
+            }
+        });
         panel_main.add(var_bookname, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 270, 220, -1));
 
         var_patronname.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 102, 0)));
@@ -441,21 +448,11 @@ public class IssueBook extends javax.swing.JFrame {
         });
         panel_main.add(rSMaterialButtonCircle1, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 560, 290, 70));
 
-        jLabel18.setFont(new java.awt.Font("Bahnschrift", 0, 24)); // NOI18N
-        jLabel18.setForeground(new java.awt.Color(255, 153, 51));
-        jLabel18.setText("   X");
-        jLabel18.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel18MouseClicked(evt);
-            }
-        });
-        panel_main.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(1140, 10, 40, -1));
-
         date_returnDate.setForeground(new java.awt.Color(0, 102, 0));
         panel_main.add(date_returnDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 490, 210, 30));
 
-        date_issueDate1.setForeground(new java.awt.Color(0, 102, 0));
-        panel_main.add(date_issueDate1, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 420, 210, 30));
+        date_issueDate.setForeground(new java.awt.Color(0, 102, 0));
+        panel_main.add(date_issueDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 420, 210, 30));
 
         getContentPane().add(panel_main, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1180, 800));
 
@@ -470,24 +467,31 @@ public class IssueBook extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel11MouseClicked
 
     private void rSMaterialButtonCircle1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSMaterialButtonCircle1ActionPerformed
+//
+//        if ((date_toDate1.getDate() == null) || (date_fromDate.getDate() == null)) {
+//            JOptionPane.showMessageDialog(this, "Choose Date");
+//        } else {
+        if ((var_bookname.getText().isBlank()) || var_patronname.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(rootPane, "Some fields are empty", "Warning", JOptionPane.WARNING_MESSAGE);
 
-        if (lbl_quantity.getText().equals("0")) {
-            JOptionPane.showMessageDialog(this, "Book Unavailable");
         } else {
-            if (alreadyIssued() == false) {
-
-                if (issueBook() == true) {
-                    JOptionPane.showMessageDialog(this, "Book Issued");
-                    updateBookCount();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Book Issue Failed");
-                }
+            if (lbl_quantity.getText().equals("0")) {
+                JOptionPane.showMessageDialog(this, "Book Unavailable");
             } else {
-                JOptionPane.showMessageDialog(this, "Patron Already Has The Book");
-            }
+                if (alreadyIssued() == false) {
 
+                    if (issueBook() == true) {
+                        JOptionPane.showMessageDialog(this, "Book Issued");
+                        updateBookCount();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Book Issue Failed");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Patron Already Has The Book");
+                }
+
+            }
         }
-        
     }//GEN-LAST:event_rSMaterialButtonCircle1ActionPerformed
 
     private void var_patronnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_var_patronnameActionPerformed
@@ -495,20 +499,20 @@ public class IssueBook extends javax.swing.JFrame {
     }//GEN-LAST:event_var_patronnameActionPerformed
 
     private void var_patronnameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_var_patronnameFocusLost
-        if (!var_patronname.getText().equals("")){
-        getPatronDetails();
+        if (!var_patronname.getText().equals("")) {
+            getPatronDetails();
         }
     }//GEN-LAST:event_var_patronnameFocusLost
 
-    private void jLabel18MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MouseClicked
-        System.exit(0);
-    }//GEN-LAST:event_jLabel18MouseClicked
-
     private void var_booknameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_var_booknameFocusLost
-        if (!var_bookname.getText().equals("")){
-        getBookDetails();
+        if (!var_bookname.getText().equals("")) {
+            getBookDetails();
         }
     }//GEN-LAST:event_var_booknameFocusLost
+
+    private void var_booknameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_var_booknameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_var_booknameActionPerformed
 
     /**
      * @param args the command line arguments
@@ -521,10 +525,11 @@ public class IssueBook extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+             UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(IssueBook.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -546,7 +551,7 @@ public class IssueBook extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.toedter.calendar.JDateChooser date_issueDate1;
+    private com.toedter.calendar.JDateChooser date_issueDate;
     private com.toedter.calendar.JDateChooser date_returnDate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
@@ -555,7 +560,6 @@ public class IssueBook extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;

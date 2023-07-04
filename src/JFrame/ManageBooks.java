@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableModel;
 import java.sql.ResultSet;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.table.TableModel;
 /**
  *
@@ -94,7 +95,7 @@ public class ManageBooks extends javax.swing.JFrame {
         
         try {
             Connection con = DBConnection.getConnection();
-            String sql = "Update book_details set book_name = 'book_name'"+var_bookname.getText()+"', book_author = ?, quantity = ? where book_id = '"+var_bookname.getText()+"'";
+            String sql = "Update book_details set book_name = ?, book_author = ?, quantity = ? where book_id = ?";
             PreparedStatement prepst = con.prepareStatement(sql);
             prepst.setString(1, bookname);
             prepst.setString(2 ,author);
@@ -174,7 +175,6 @@ public class ManageBooks extends javax.swing.JFrame {
         tbl_bookdetails = new rojeru_san.complementos.RSTableMetro();
         jLabel11 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
-        jLabel12 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1180, 700));
@@ -249,6 +249,7 @@ public class ManageBooks extends javax.swing.JFrame {
 
         var_copies.setBackground(new java.awt.Color(0, 102, 0));
         var_copies.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(255, 255, 51)));
+        var_copies.setText("1");
         var_copies.setFont(new java.awt.Font("Microsoft JhengHei UI", 0, 14)); // NOI18N
         var_copies.setPhColor(new java.awt.Color(255, 255, 51));
         var_copies.setPlaceholder("No. Of Copies...");
@@ -427,15 +428,6 @@ public class ManageBooks extends javax.swing.JFrame {
             .addGap(0, 5, Short.MAX_VALUE)
         );
 
-        jLabel12.setFont(new java.awt.Font("Bahnschrift", 0, 24)); // NOI18N
-        jLabel12.setForeground(new java.awt.Color(255, 153, 51));
-        jLabel12.setText(" X");
-        jLabel12.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel12MouseClicked(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -449,12 +441,10 @@ public class ManageBooks extends javax.swing.JFrame {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 642, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(494, 494, 494))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(181, 181, 181)
                         .addComponent(jLabel11)
-                        .addGap(171, 171, 171)
-                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addComponent(jLabel10)
                 .addContainerGap())
@@ -466,11 +456,9 @@ public class ManageBooks extends javax.swing.JFrame {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(33, 33, 33)
                         .addComponent(jLabel11))
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(jLabel10))))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel10)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 5, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37)
@@ -490,6 +478,8 @@ public class ManageBooks extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel1MouseClicked
 
     private void rSMaterialButtonCircle2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSMaterialButtonCircle2ActionPerformed
+        int p = JOptionPane.showConfirmDialog(null, "Proceed with delete","Delete",JOptionPane.YES_NO_OPTION);
+        if(p==0){
         if (deleteBook() ==true){
             JOptionPane.showMessageDialog(this, "Book Deleted");
             clearTable();
@@ -497,6 +487,7 @@ public class ManageBooks extends javax.swing.JFrame {
         }else{
             JOptionPane.showMessageDialog(this, "Book Deletion Failed");
         }
+        }  
     }//GEN-LAST:event_rSMaterialButtonCircle2ActionPerformed
 
     private void jLabel10MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10MouseClicked
@@ -534,11 +525,6 @@ public class ManageBooks extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_rSMaterialButtonCircle1ActionPerformed
 
-    private void jLabel12MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MouseClicked
-        // TODO add your handling code here:
-        System.exit(0);
-    }//GEN-LAST:event_jLabel12MouseClicked
-
     /**
      * @param args the command line arguments
      */
@@ -550,10 +536,11 @@ public class ManageBooks extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+             UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(ManageBooks.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -578,7 +565,6 @@ public class ManageBooks extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

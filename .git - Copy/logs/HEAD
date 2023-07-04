@@ -1,0 +1,7 @@
+0000000000000000000000000000000000000000 ca3318090357f5c19571419f7dc02a36c3f62cfe emuiga <muigastephen14@gmail.com> 1686812772 +0300	commit (initial): Interface and functionality
+ca3318090357f5c19571419f7dc02a36c3f62cfe ca3318090357f5c19571419f7dc02a36c3f62cfe emuiga <muigastephen14@gmail.com> 1686830902 +0300	checkout: moving from main to IssueBookModify
+ca3318090357f5c19571419f7dc02a36c3f62cfe cae5660631fddb72a195998929be9e3fc01f89b8 emuiga <muigastephen14@gmail.com> 1686832103 +0300	commit: issueBookFeature
+cae5660631fddb72a195998929be9e3fc01f89b8 ca3318090357f5c19571419f7dc02a36c3f62cfe emuiga <muigastephen14@gmail.com> 1686833008 +0300	checkout: moving from IssueBookModify to main
+ca3318090357f5c19571419f7dc02a36c3f62cfe d02e568a9bd589087b386d62dc62c65821d6b9e0 emuiga <muigastephen14@gmail.com> 1686833143 +0300	commit: debugging
+d02e568a9bd589087b386d62dc62c65821d6b9e0 d02e568a9bd589087b386d62dc62c65821d6b9e0 emuiga <muigastephen14@gmail.com> 1686843240 +0300	checkout: moving from main to IssueBookModify
+d02e568a9bd589087b386d62dc62c65821d6b9e0 cae5660631fddb72a195998929be9e3fc01f89b8 emuiga <muigastephen14@gmail.com> 1686843282 +0300	reset: moving to cae5660

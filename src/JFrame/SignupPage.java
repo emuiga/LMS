@@ -6,11 +6,13 @@ package JFrame;
 
 //import static JFrame.DBConnection.con;
 import static JFrame.DBConnection.con;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import javax.swing.JOptionPane;
 import java.sql.ResultSet;
+import javax.swing.UIManager;
 /**
  *
  * @author muiga
@@ -63,6 +65,8 @@ public class SignupPage extends javax.swing.JFrame {
         String email = var_mail.getText();
         String password = var_password.getText();
         String contact = var_telephone.getText();
+        String phoneNumber = var_telephone.getText();
+        int length = phoneNumber.length();
         
         if (name.equals("")){
             JOptionPane.showMessageDialog(this, "please enter username");
@@ -76,10 +80,10 @@ public class SignupPage extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "please enter password");
             return false;
         }
-        if (contact.equals("")){
-            JOptionPane.showMessageDialog(this, "please enter phone number");
-            return false;
-        }
+        if (contact.equals("") || phoneNumber.length()<10){
+             JOptionPane.showMessageDialog(this, "please enter phone number");
+            return false;   
+            }
         return true;
     }
     
@@ -93,6 +97,27 @@ public class SignupPage extends javax.swing.JFrame {
             
             PreparedStatement prepst = con.prepareStatement("select * from users where name = ?");
             prepst.setString(1, name);
+            ResultSet rs = prepst.executeQuery();
+            if (rs.next()) {
+                isExist =  true;
+            }else {
+                isExist = false;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return isExist;
+    }
+    
+        public boolean restrictEmailDuplicates(){
+        String email = var_mail.getText();
+        boolean isExist = false;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/nca_lmsdb","root","");
+            
+            PreparedStatement prepst = con.prepareStatement("select * from users where email = ?");
+            prepst.setString(1, email);
             ResultSet rs = prepst.executeQuery();
             if (rs.next()) {
                 isExist =  true;
@@ -136,14 +161,12 @@ public class SignupPage extends javax.swing.JFrame {
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
-        rSMaterialButtonCircle1 = new rojerusan.RSMaterialButtonCircle();
-        rSMaterialButtonCircle2 = new rojerusan.RSMaterialButtonCircle();
-        jLabel17 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1180, 700));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(1180, 700));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -199,6 +222,16 @@ public class SignupPage extends javax.swing.JFrame {
         var_telephone.setFont(new java.awt.Font("Microsoft JhengHei UI", 0, 14)); // NOI18N
         var_telephone.setPhColor(new java.awt.Color(255, 255, 51));
         var_telephone.setPlaceholder("Enter Your Phone No.");
+        var_telephone.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                var_telephoneActionPerformed(evt);
+            }
+        });
+        var_telephone.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                var_telephoneKeyPressed(evt);
+            }
+        });
 
         jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/icons8_Google_Mobile_50px.png"))); // NOI18N
 
@@ -222,12 +255,22 @@ public class SignupPage extends javax.swing.JFrame {
         var_mail.setFont(new java.awt.Font("Microsoft JhengHei UI", 0, 14)); // NOI18N
         var_mail.setPhColor(new java.awt.Color(255, 255, 51));
         var_mail.setPlaceholder("Enter Your Email");
+        var_mail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                var_mailActionPerformed(evt);
+            }
+        });
 
         var_password.setBackground(new java.awt.Color(0, 102, 0));
         var_password.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(255, 255, 51)));
         var_password.setFont(new java.awt.Font("Microsoft JhengHei UI", 0, 14)); // NOI18N
         var_password.setPhColor(new java.awt.Color(255, 255, 51));
         var_password.setPlaceholder("Enter Your Password");
+        var_password.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                var_passwordActionPerformed(evt);
+            }
+        });
 
         jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/icons8_Account_50px.png"))); // NOI18N
 
@@ -243,30 +286,25 @@ public class SignupPage extends javax.swing.JFrame {
         jLabel16.setForeground(new java.awt.Color(255, 153, 51));
         jLabel16.setText("Password");
 
-        rSMaterialButtonCircle1.setBackground(new java.awt.Color(255, 153, 51));
-        rSMaterialButtonCircle1.setForeground(new java.awt.Color(0, 102, 0));
-        rSMaterialButtonCircle1.setText("LOG IN");
-        rSMaterialButtonCircle1.addActionListener(new java.awt.event.ActionListener() {
+        jButton1.setBackground(new java.awt.Color(255, 255, 51));
+        jButton1.setFont(new java.awt.Font("Forte", 0, 18)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(0, 102, 0));
+        jButton1.setText("SIGN UP");
+        jButton1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, null, new java.awt.Color(0, 102, 0), null, new java.awt.Color(0, 153, 51)));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rSMaterialButtonCircle1ActionPerformed(evt);
+                jButton1ActionPerformed(evt);
             }
         });
 
-        rSMaterialButtonCircle2.setBackground(new java.awt.Color(255, 255, 51));
-        rSMaterialButtonCircle2.setForeground(new java.awt.Color(0, 102, 0));
-        rSMaterialButtonCircle2.setText("SIGN UP");
-        rSMaterialButtonCircle2.addActionListener(new java.awt.event.ActionListener() {
+        jButton2.setBackground(new java.awt.Color(255, 153, 0));
+        jButton2.setFont(new java.awt.Font("Forte", 0, 18)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(0, 102, 0));
+        jButton2.setText("LOG IN");
+        jButton2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, null, new java.awt.Color(0, 153, 51), null, new java.awt.Color(255, 153, 0)));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rSMaterialButtonCircle2ActionPerformed(evt);
-            }
-        });
-
-        jLabel17.setFont(new java.awt.Font("Bahnschrift", 0, 24)); // NOI18N
-        jLabel17.setForeground(new java.awt.Color(255, 153, 51));
-        jLabel17.setText("  X");
-        jLabel17.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel17MouseClicked(evt);
+                jButton2ActionPerformed(evt);
             }
         });
 
@@ -275,14 +313,9 @@ public class SignupPage extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(45, 45, 45)
-                        .addComponent(rSMaterialButtonCircle2, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(rSMaterialButtonCircle1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel12)
@@ -303,31 +336,29 @@ public class SignupPage extends javax.swing.JFrame {
                                     .addComponent(jLabel16)
                                     .addComponent(var_password, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(60, 60, 60)
+                                .addComponent(jLabel15))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel10)
                                 .addGap(10, 10, 10)
-                                .addComponent(var_telephone, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(60, 60, 60)
-                                .addComponent(jLabel15)))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(59, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(var_telephone, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 53, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel8)
-                            .addGap(143, 143, 143))
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addComponent(jLabel7)
-                            .addGap(18, 18, 18)))
-                    .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel7))
+                        .addGap(143, 143, 143))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
+                .addGap(44, 44, 44)
                 .addComponent(jLabel7)
                 .addGap(25, 25, 25)
                 .addComponent(jLabel8)
@@ -366,11 +397,11 @@ public class SignupPage extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addComponent(var_telephone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(27, 27, 27)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rSMaterialButtonCircle2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(rSMaterialButtonCircle1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(98, Short.MAX_VALUE))
+                .addGap(35, 35, 35)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(103, Short.MAX_VALUE))
         );
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 0, 460, 700));
@@ -381,30 +412,67 @@ public class SignupPage extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void rSMaterialButtonCircle2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSMaterialButtonCircle2ActionPerformed
-        if (validateSignup() == true) {
-            if (restrictDuplicates() == false){
-                insertSignupDetails();
-            }else{
-                JOptionPane.showMessageDialog(this,"username already exists");
-            }
-        }
-    }//GEN-LAST:event_rSMaterialButtonCircle2ActionPerformed
-
-    private void jLabel17MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MouseClicked
-        System.exit(0);
-    }//GEN-LAST:event_jLabel17MouseClicked
-
     private void var_usernameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_var_usernameFocusLost
-        if (restrictDuplicates() == true){
-            JOptionPane.showMessageDialog(this, "username already exists");
+        if (restrictDuplicates() == true || restrictEmailDuplicates()== true){
+            JOptionPane.showMessageDialog(this, "patron already exists");
         }
     }//GEN-LAST:event_var_usernameFocusLost
 
-    private void rSMaterialButtonCircle1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSMaterialButtonCircle1ActionPerformed
+    private void var_telephoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_var_telephoneActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_var_telephoneActionPerformed
+
+    private void var_telephoneKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_var_telephoneKeyPressed
+        // TODO add your handling code here:
+        String phoneNumber = var_telephone.getText();
+        int length = phoneNumber.length();
+        
+        char c = evt.getKeyChar();
+        //check for number 0-9
+        if(evt.getKeyChar()>='0' && evt.getKeyChar()<='9'){
+            //check for length not more than 10 digit
+            if(length<10){
+                var_telephone.setEditable(true);
+            }else{
+                //not editable if length>10
+                var_telephone.setEditable(false);
+            }
+        }else{
+            //allow 'back space' and 'delete' for edit
+            if(evt.getExtendedKeyCode()==KeyEvent.VK_BACK_SPACE || evt.getExtendedKeyCode()==KeyEvent.VK_DELETE ){
+               // allow edit
+               var_telephone.setEditable(true);
+            }else{
+                var_telephone.setEditable(false);
+            }
+        }
+    }//GEN-LAST:event_var_telephoneKeyPressed
+
+    private void var_mailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_var_mailActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_var_mailActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        if (validateSignup() == true) {
+            if (restrictDuplicates() == false || restrictEmailDuplicates() == false){
+                insertSignupDetails();
+            }else{
+                JOptionPane.showMessageDialog(this,"patron already exists");
+            }
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
         LoginPage login = new LoginPage();
         login.setVisible(true);
-    }//GEN-LAST:event_rSMaterialButtonCircle1ActionPerformed
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void var_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_var_passwordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_var_passwordActionPerformed
 
     /**
      * @param args the command line arguments
@@ -417,20 +485,17 @@ public class SignupPage extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+                  UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SignupPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SignupPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SignupPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(SignupPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        
         //</editor-fold>
 
         /* Create and display the form */
@@ -442,6 +507,8 @@ public class SignupPage extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -450,7 +517,6 @@ public class SignupPage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
@@ -462,8 +528,6 @@ public class SignupPage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private rojerusan.RSMaterialButtonCircle rSMaterialButtonCircle1;
-    private rojerusan.RSMaterialButtonCircle rSMaterialButtonCircle2;
     private app.bolivia.swing.JCTextField var_mail;
     private app.bolivia.swing.JCTextField var_password;
     private app.bolivia.swing.JCTextField var_telephone;

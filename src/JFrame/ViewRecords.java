@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
 import java.util.Date;
+import javax.swing.UIManager;
 
 /**
  *
@@ -62,7 +63,7 @@ public class ViewRecords extends javax.swing.JFrame {
     //fetch record
     public void search(){
         Date uFromDate = date_fromDate.getDate();
-        Date uToDate = date_fromDate.getDate();
+        Date uToDate = date_toDate1.getDate();
         
         long l1 = uFromDate.getTime();
         long l2 = uToDate.getTime();
@@ -81,6 +82,7 @@ public class ViewRecords extends javax.swing.JFrame {
             ResultSet rs = prepst.executeQuery();
             if (rs.next() == false){
                 JOptionPane.showMessageDialog(this,"No record found");
+                issuePatronDetails();
             }else{
                 while(rs.next()){
                 String id = rs.getString("id");
@@ -136,19 +138,19 @@ public class ViewRecords extends javax.swing.JFrame {
         jLabel12.setForeground(new java.awt.Color(255, 153, 51));
         jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/AddNewBookIcons/icons8_Literature_100px_1.png"))); // NOI18N
         jLabel12.setText(" View Records");
-        jPanel1.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 80, -1, 50));
-        jPanel1.add(jProgressBar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 170, 350, 5));
+        jPanel1.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 50, -1, 50));
+        jPanel1.add(jProgressBar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 130, 350, 5));
 
         jLabel21.setBackground(new java.awt.Color(255, 153, 51));
         jLabel21.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
         jLabel21.setForeground(new java.awt.Color(255, 153, 51));
         jLabel21.setText("  Issue Date :");
-        jPanel1.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 240, 120, -1));
+        jPanel1.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 190, 120, -1));
 
         jLabel19.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
         jLabel19.setForeground(new java.awt.Color(255, 153, 51));
         jLabel19.setText("  Due Date :");
-        jPanel1.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 240, 130, -1));
+        jPanel1.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 190, 130, -1));
 
         rSMaterialButtonRectangle1.setBackground(new java.awt.Color(0, 0, 0));
         rSMaterialButtonRectangle1.setText("SEARCH");
@@ -157,7 +159,7 @@ public class ViewRecords extends javax.swing.JFrame {
                 rSMaterialButtonRectangle1ActionPerformed(evt);
             }
         });
-        jPanel1.add(rSMaterialButtonRectangle1, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 230, 170, 50));
+        jPanel1.add(rSMaterialButtonRectangle1, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 180, 170, 50));
 
         jPanel3.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -189,7 +191,7 @@ public class ViewRecords extends javax.swing.JFrame {
         jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 40));
 
         jLabel17.setFont(new java.awt.Font("Bahnschrift", 0, 24)); // NOI18N
-        jLabel17.setForeground(new java.awt.Color(255, 153, 51));
+        jLabel17.setForeground(new java.awt.Color(0, 102, 0));
         jLabel17.setText("  X");
         jLabel17.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -200,13 +202,13 @@ public class ViewRecords extends javax.swing.JFrame {
 
         date_fromDate.setBackground(new java.awt.Color(255, 153, 51));
         date_fromDate.setDateFormatString("dd/MM/yyyy");
-        jPanel1.add(date_fromDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 230, 220, 40));
+        jPanel1.add(date_fromDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 180, 220, 40));
 
         date_toDate1.setBackground(new java.awt.Color(255, 153, 51));
         date_toDate1.setDateFormatString("dd/MM/yy");
-        jPanel1.add(date_toDate1, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 230, 220, 40));
+        jPanel1.add(date_toDate1, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 180, 220, 40));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 280));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 230));
 
         tbl_recorddetails.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -244,11 +246,11 @@ public class ViewRecords extends javax.swing.JFrame {
         panel_tableLayout.setVerticalGroup(
             panel_tableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_tableLayout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 201, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 588, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 82, Short.MAX_VALUE))
         );
 
-        getContentPane().add(panel_table, new org.netbeans.lib.awtextra.AbsoluteConstraints(-10, 280, 1160, 620));
+        getContentPane().add(panel_table, new org.netbeans.lib.awtextra.AbsoluteConstraints(-10, 230, 1160, 670));
 
         setSize(new java.awt.Dimension(1180, 700));
         setLocationRelativeTo(null);
@@ -270,14 +272,18 @@ public class ViewRecords extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_jLabel2MouseClicked
 
+    private void rSMaterialButtonRectangle1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSMaterialButtonRectangle1ActionPerformed
+        if ((date_toDate1.getDate() == null) || (date_fromDate.getDate() == null)) {
+            JOptionPane.showMessageDialog(this, "Choose Date");
+        } else{ 
+        clearTable();
+        search();
+        }
+    }//GEN-LAST:event_rSMaterialButtonRectangle1ActionPerformed
+
     private void jLabel17MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MouseClicked
         System.exit(0);
     }//GEN-LAST:event_jLabel17MouseClicked
-
-    private void rSMaterialButtonRectangle1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSMaterialButtonRectangle1ActionPerformed
-        clearTable();
-        search();
-    }//GEN-LAST:event_rSMaterialButtonRectangle1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -290,10 +296,11 @@ public class ViewRecords extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+             UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(ViewRecords.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);

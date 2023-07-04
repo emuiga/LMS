@@ -10,8 +10,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Date;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import net.proteanit.sql.DbUtils;
 
 
@@ -29,15 +32,11 @@ public class ReturnBook extends javax.swing.JFrame {
     DefaultTableModel model;
     public ReturnBook() {
         initComponents();
+        issuePatronDetails();
     }
     
-    //fetch issue book details
-    public void getIssueBookDetails(){
-
-        int bookId = Integer.parseInt(var_bookId.getText());
-        int patronId = Integer.parseInt(var_patronId.getText());
-        
-        try{
+    public void issuePatronDetails(){
+        try {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/nca_lmsdb","root","");
             Statement st = con.createStatement();
@@ -52,14 +51,112 @@ public class ReturnBook extends javax.swing.JFrame {
                 String status = rs.getString("status");
                 
                 Object[] obj = {id,bookName,patronName,issueDate,dueDate,status};
-                model =(DefaultTableModel) tbl_returnbooktable.getModel();//typecast
+                model =(DefaultTableModel) tbl_returnbookdetails.getModel();//typecast
                 model.addRow(obj);
             }
         }catch(Exception e){
             e.printStackTrace();
         }
     }
+    //fetch issue book details
+    public void getIssueBookDetails(){
+
+        String book_name = var_bookname.getText();
+        String patron_name = var_patronname.getText();
+        
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/nca_lmsdb","root","");
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("select book_name,patron_name from issue_book_details");
+            
+            while(rs.next()){
+                String bookName = rs.getString("book_name");
+                String patronName = rs.getString("patron_name");
+                String status = rs.getString("status");
+                
+                Object[] obj = {bookName,patronName,status};
+                model =(DefaultTableModel) tbl_returnbookdetails.getModel();//typecast
+                model.addRow(obj);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    //book return
+    public boolean returnBook(){
+        boolean isReturned = false;
+        int bookId = Integer.parseInt(var_bookname.getText());
+        int patronId = Integer.parseInt(var_patronname.getText());
+        try{
+            Connection con = DBConnection.getConnection();
+            String sql = "update issue_book_details set status = ? where patronId = ? and book_id = ? and status = ?";
+            PreparedStatement prepst = con.prepareStatement(sql);
+            prepst.setString(1, "returned");
+            prepst.setInt(2,patronId);
+            prepst.setInt(3, bookId);
+            prepst.setString(4, "pending");
+            
+            int rowCount = prepst.executeUpdate();
+            if (rowCount > 0){
+                isReturned = true;
+            }else{
+                isReturned = false;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return isReturned;
+    }
     
+//    public boolean renewIssuePeriod() {
+//        boolean isIssued = false;
+////        int bookId =Integer.parseInt(var_bookid.getText());
+////        int patronId =Integer.parseInt(var_patronId.getText());
+//        String book_name = var_bookname.getText();
+//        String patron_name = var_patronname.getText();
+//
+//        try {
+//            if (rowCount > 0) {
+//                isIssued = true;
+//                Connection con = DBConnection.getConnection();
+//            String sql = "insert into issue_book_details(book_name,patron_name,patronId,book_id,issue_date,due_date,status) values(?,?,?,?,?,?,?)";
+//            PreparedStatement prepst = con.prepareStatement(sql);
+//            prepst.setString(1, book_name);
+//            prepst.setString(2, patron_name);
+//            prepst.setDate(5, sIssueDate);
+//            prepst.setDate(6, sDueDate);
+//            prepst.setString(7, "renewed");
+//
+//            int rowCount = prepst.executeUpdate();
+//            } else {
+//                isReturned = true;
+//                Connection con = DBConnection.getConnection();
+//            String sql = "insert into issue_book_details(book_name,patron_name,patronId,book_id,issue_date,due_date,status) values(?,?,?,?,?,?,?)";
+//            PreparedStatement prepst = con.prepareStatement(sql);
+//            prepst.setString(1, book_name);
+//            prepst.setString(2, patron_name);
+//            prepst.setDate(5, sIssueDate);
+//            prepst.setDate(6, sDueDate);
+//            prepst.setString(7, "returned");
+//
+//            int rowCount = prepst.executeUpdate();
+//            } else {
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return isIssued;
+//    }
+    
+    private void FillCombo(){
+        try{
+            String sql = "select * from issue_book_details";
+            
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
 //    public void issuePatronDetails(){
 //        try {
 //            Class.forName("com.mysql.jdbc.Driver");
@@ -84,31 +181,6 @@ public class ReturnBook extends javax.swing.JFrame {
 //        }
 //    }
     
-    //book return
-    public boolean returnBook(){
-        boolean isReturned = false;
-        int bookId = Integer.parseInt(var_bookId.getText());
-        int patronId = Integer.parseInt(var_patronId.getText());
-        try{
-            Connection con = DBConnection.getConnection();
-            String sql = "update issue_book_details set status = ? where patronId = ? and book_id = ? and status = ?";
-            PreparedStatement prepst = con.prepareStatement(sql);
-            prepst.setString(1, "returned");
-            prepst.setInt(2,patronId);
-            prepst.setInt(3, bookId);
-            prepst.setString(4, "pending");
-            
-            int rowCount = prepst.executeUpdate();
-            if (rowCount > 0){
-                isReturned = true;
-            }else{
-                isReturned = false;
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return isReturned;
-    }
     
     //update book count
 //    public void updateBookCount(){
@@ -169,18 +241,20 @@ public class ReturnBook extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         rSMaterialButtonCircle1 = new rojerusan.RSMaterialButtonCircle();
         rSMaterialButtonCircle2 = new rojerusan.RSMaterialButtonCircle();
-        var_patronId = new app.bolivia.swing.JCTextField();
+        var_patronname = new app.bolivia.swing.JCTextField();
         jLabel9 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
-        var_bookId = new app.bolivia.swing.JCTextField();
+        var_bookname = new app.bolivia.swing.JCTextField();
         jLabel8 = new javax.swing.JLabel();
         jProgressBar4 = new javax.swing.JProgressBar();
+        jLabel21 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
         jLabel18 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jProgressBar2 = new javax.swing.JProgressBar();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tbl_returnbooktable = new rojeru_san.complementos.RSTableMetro();
+        tbl_returnbookdetails = new rojeru_san.complementos.RSTableMetro();
 
         lbl_bookError.setFont(new java.awt.Font("Georgia", 0, 17)); // NOI18N
         lbl_bookError.setForeground(new java.awt.Color(255, 153, 51));
@@ -236,7 +310,7 @@ public class ReturnBook extends javax.swing.JFrame {
                 rSMaterialButtonCircle1ActionPerformed(evt);
             }
         });
-        lbl_branch1.add(rSMaterialButtonCircle1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 580, 290, 70));
+        lbl_branch1.add(rSMaterialButtonCircle1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 560, 290, 70));
 
         rSMaterialButtonCircle2.setBackground(new java.awt.Color(255, 153, 51));
         rSMaterialButtonCircle2.setForeground(new java.awt.Color(0, 0, 0));
@@ -247,66 +321,78 @@ public class ReturnBook extends javax.swing.JFrame {
                 rSMaterialButtonCircle2ActionPerformed(evt);
             }
         });
-        lbl_branch1.add(rSMaterialButtonCircle2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 490, 290, 70));
+        lbl_branch1.add(rSMaterialButtonCircle2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 470, 290, 70));
 
-        var_patronId.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 102, 0)));
-        var_patronId.setFont(new java.awt.Font("Microsoft JhengHei UI", 0, 14)); // NOI18N
-        var_patronId.setPhColor(new java.awt.Color(0, 102, 0));
-        var_patronId.setPlaceholder("Patron Id...");
-        var_patronId.addFocusListener(new java.awt.event.FocusAdapter() {
+        var_patronname.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 102, 0)));
+        var_patronname.setFont(new java.awt.Font("Microsoft JhengHei UI", 0, 14)); // NOI18N
+        var_patronname.setPhColor(new java.awt.Color(0, 102, 0));
+        var_patronname.setPlaceholder("Borrower");
+        var_patronname.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
-                var_patronIdFocusLost(evt);
+                var_patronnameFocusLost(evt);
             }
         });
-        var_patronId.addActionListener(new java.awt.event.ActionListener() {
+        var_patronname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                var_patronIdActionPerformed(evt);
+                var_patronnameActionPerformed(evt);
             }
         });
-        lbl_branch1.add(var_patronId, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 360, 220, -1));
+        lbl_branch1.add(var_patronname, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 330, 200, -1));
 
         jLabel9.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
-        jLabel9.setText("    Patron ID  :");
-        lbl_branch1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 370, 130, -1));
+        jLabel9.setText("  Patron   :");
+        lbl_branch1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 330, 100, 30));
 
         jLabel20.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
-        jLabel20.setText("    Book ID  :");
-        lbl_branch1.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 280, 130, -1));
+        jLabel20.setText("  Title  :");
+        lbl_branch1.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 270, 100, 30));
 
-        var_bookId.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 102, 0)));
-        var_bookId.setFont(new java.awt.Font("Microsoft JhengHei UI", 0, 14)); // NOI18N
-        var_bookId.setPhColor(new java.awt.Color(0, 102, 0));
-        var_bookId.setPlaceholder("Book Id...");
-        var_bookId.addFocusListener(new java.awt.event.FocusAdapter() {
+        var_bookname.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 102, 0)));
+        var_bookname.setFont(new java.awt.Font("Microsoft JhengHei UI", 0, 14)); // NOI18N
+        var_bookname.setPhColor(new java.awt.Color(0, 102, 0));
+        var_bookname.setPlaceholder("Book Name...");
+        var_bookname.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
-                var_bookIdFocusLost(evt);
+                var_booknameFocusLost(evt);
             }
         });
-        var_bookId.addActionListener(new java.awt.event.ActionListener() {
+        var_bookname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                var_bookIdActionPerformed(evt);
+                var_booknameActionPerformed(evt);
             }
         });
-        var_bookId.addKeyListener(new java.awt.event.KeyAdapter() {
+        var_bookname.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                var_bookIdKeyReleased(evt);
+                var_booknameKeyReleased(evt);
             }
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                var_bookIdKeyTyped(evt);
+                var_booknameKeyTyped(evt);
             }
         });
-        lbl_branch1.add(var_bookId, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 270, 220, -1));
+        lbl_branch1.add(var_bookname, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 270, 200, -1));
 
         jLabel8.setFont(new java.awt.Font("Georgia", 1, 24)); // NOI18N
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/AddNewBookIcons/icons8_Books_52px_1.png"))); // NOI18N
         jLabel8.setText("  Return Book");
-        lbl_branch1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 90, -1, -1));
+        lbl_branch1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 90, -1, -1));
 
         jProgressBar4.setBackground(new java.awt.Color(0, 0, 0));
         jProgressBar4.setForeground(new java.awt.Color(0, 0, 0));
-        lbl_branch1.add(jProgressBar4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 180, 310, -1));
+        lbl_branch1.add(jProgressBar4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, 310, -1));
 
-        panel_main.add(lbl_branch1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 380, 700));
+        jLabel21.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
+        jLabel21.setText("  Action : ");
+        lbl_branch1.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 390, 100, 30));
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Return", "Renewed" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+        lbl_branch1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 392, 200, 30));
+
+        panel_main.add(lbl_branch1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 350, 700));
 
         jLabel18.setFont(new java.awt.Font("Bahnschrift", 0, 24)); // NOI18N
         jLabel18.setForeground(new java.awt.Color(255, 153, 51));
@@ -336,36 +422,31 @@ public class ReturnBook extends javax.swing.JFrame {
         jProgressBar2.setBackground(new java.awt.Color(255, 153, 51));
         panel_main.add(jProgressBar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 140, 310, -1));
 
-        tbl_returnbooktable.setModel(new javax.swing.table.DefaultTableModel(
+        tbl_returnbookdetails.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
-                "Issue ID", "Book ID", "Patron ID", "Issued Date", "Due Date"
+                "ID", "Book Name", "Patron Name", "Issue Date", "Due Date", "Status"
             }
         ));
-        tbl_returnbooktable.setColorBackgoundHead(new java.awt.Color(0, 0, 0));
-        tbl_returnbooktable.setColorBordeFilas(new java.awt.Color(255, 153, 51));
-        tbl_returnbooktable.setColorBordeHead(new java.awt.Color(255, 153, 51));
-        tbl_returnbooktable.setColorFilasBackgound2(new java.awt.Color(255, 255, 255));
-        tbl_returnbooktable.setColorFilasForeground1(new java.awt.Color(255, 153, 51));
-        tbl_returnbooktable.setColorFilasForeground2(new java.awt.Color(255, 153, 51));
-        tbl_returnbooktable.setColorSelBackgound(new java.awt.Color(0, 153, 51));
-        tbl_returnbooktable.setPreferredSize(new java.awt.Dimension(300, 0));
-        tbl_returnbooktable.setRowHeight(40);
-        jScrollPane1.setViewportView(tbl_returnbooktable);
-        if (tbl_returnbooktable.getColumnModel().getColumnCount() > 0) {
-            tbl_returnbooktable.getColumnModel().getColumn(0).setHeaderValue("Issue ID");
-            tbl_returnbooktable.getColumnModel().getColumn(1).setHeaderValue("Book ID");
-            tbl_returnbooktable.getColumnModel().getColumn(2).setHeaderValue("Patron ID");
-            tbl_returnbooktable.getColumnModel().getColumn(3).setHeaderValue("Issued Date");
-            tbl_returnbooktable.getColumnModel().getColumn(4).setHeaderValue("Due Date");
-        }
+        tbl_returnbookdetails.setColorBackgoundHead(new java.awt.Color(0, 0, 0));
+        tbl_returnbookdetails.setColorBordeHead(new java.awt.Color(255, 153, 51));
+        tbl_returnbookdetails.setColorFilasBackgound2(new java.awt.Color(255, 255, 255));
+        tbl_returnbookdetails.setColorFilasForeground1(new java.awt.Color(0, 0, 0));
+        tbl_returnbookdetails.setColorFilasForeground2(new java.awt.Color(0, 0, 0));
+        tbl_returnbookdetails.setColorForegroundHead(new java.awt.Color(255, 153, 51));
+        tbl_returnbookdetails.setColorSelBackgound(new java.awt.Color(102, 0, 102));
+        tbl_returnbookdetails.setColorSelForeground(new java.awt.Color(255, 153, 51));
+        tbl_returnbookdetails.setRowHeight(40);
+        tbl_returnbookdetails.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_returnbookdetailsMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tbl_returnbookdetails);
 
-        panel_main.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 180, 770, 470));
+        panel_main.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 170, 810, 530));
 
         getContentPane().add(panel_main, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1170, 700));
 
@@ -379,17 +460,17 @@ public class ReturnBook extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_jLabel11MouseClicked
 
-    private void var_bookIdFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_var_bookIdFocusLost
+    private void var_booknameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_var_booknameFocusLost
 
-    }//GEN-LAST:event_var_bookIdFocusLost
+    }//GEN-LAST:event_var_booknameFocusLost
 
-    private void var_patronIdFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_var_patronIdFocusLost
+    private void var_patronnameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_var_patronnameFocusLost
         
-    }//GEN-LAST:event_var_patronIdFocusLost
+    }//GEN-LAST:event_var_patronnameFocusLost
 
-    private void var_patronIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_var_patronIdActionPerformed
+    private void var_patronnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_var_patronnameActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_var_patronIdActionPerformed
+    }//GEN-LAST:event_var_patronnameActionPerformed
 
     private void rSMaterialButtonCircle1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSMaterialButtonCircle1ActionPerformed
 if(returnBook() == true){
@@ -410,26 +491,39 @@ if(returnBook() == true){
       getIssueBookDetails();
     }//GEN-LAST:event_rSMaterialButtonCircle2ActionPerformed
 
-    private void var_bookIdKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_var_bookIdKeyTyped
+    private void var_booknameKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_var_booknameKeyTyped
          
-    }//GEN-LAST:event_var_bookIdKeyTyped
+    }//GEN-LAST:event_var_booknameKeyTyped
 
-    private void var_bookIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_var_bookIdActionPerformed
+    private void var_booknameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_var_booknameActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_var_bookIdActionPerformed
+    }//GEN-LAST:event_var_booknameActionPerformed
 
-    private void var_bookIdKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_var_bookIdKeyReleased
+    private void var_booknameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_var_booknameKeyReleased
         // TODO add your handling code here:
-        String books=var_bookId.getText();
-        String sql = "Select * from issue_book_details where book_id ='"+books+"'";
+        String books=var_bookname.getText();
+        String sql = "Select * from issue_book_details where book_name ='"+books+"'";
                 try{
                     PreparedStatement prepst = con.prepareStatement(sql);
                      ResultSet rs=prepst.executeQuery();
-                     tbl_returnbooktable.setModel(DbUtils.resultSetToTableModel(rs));
+                     tbl_returnbookdetails.setModel(DbUtils.resultSetToTableModel(rs));
                 }catch(Exception e){
                     e.printStackTrace();
                 }
-    }//GEN-LAST:event_var_bookIdKeyReleased
+    }//GEN-LAST:event_var_booknameKeyReleased
+
+    private void tbl_returnbookdetailsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_returnbookdetailsMouseClicked
+                int rowNumber = tbl_returnbookdetails.getSelectedRow();
+                TableModel model = tbl_returnbookdetails.getModel();
+
+                var_bookname.setText(model.getValueAt(rowNumber, 1).toString());
+                var_patronname.setText(model.getValueAt(rowNumber, 2).toString());
+    }//GEN-LAST:event_tbl_returnbookdetailsMouseClicked
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jLabel13MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MouseClicked
         // TODO add your handling code here:
@@ -447,10 +541,11 @@ if(returnBook() == true){
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+             UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(ReturnBook.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -472,11 +567,13 @@ if(returnBook() == true){
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel4;
@@ -488,8 +585,8 @@ if(returnBook() == true){
     private javax.swing.JPanel panel_main;
     private rojerusan.RSMaterialButtonCircle rSMaterialButtonCircle1;
     private rojerusan.RSMaterialButtonCircle rSMaterialButtonCircle2;
-    private rojeru_san.complementos.RSTableMetro tbl_returnbooktable;
-    private app.bolivia.swing.JCTextField var_bookId;
-    private app.bolivia.swing.JCTextField var_patronId;
+    private rojeru_san.complementos.RSTableMetro tbl_returnbookdetails;
+    private app.bolivia.swing.JCTextField var_bookname;
+    private app.bolivia.swing.JCTextField var_patronname;
     // End of variables declaration//GEN-END:variables
 }

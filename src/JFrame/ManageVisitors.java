@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import javax.swing.table.TableModel;
 
 /**
@@ -171,7 +172,6 @@ public class ManageVisitors extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1180, 700));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(1180, 700));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel2.setBackground(new java.awt.Color(0, 102, 0));
@@ -427,12 +427,15 @@ public class ManageVisitors extends javax.swing.JFrame {
     }//GEN-LAST:event_rSMaterialButtonCircle3ActionPerformed
 
     private void rSMaterialButtonCircle2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSMaterialButtonCircle2ActionPerformed
+        int p = JOptionPane.showConfirmDialog(null,"Proceed with delete","Delete",JOptionPane.YES_NO_OPTION);
+        if(p==0){
         if (deletePatron() == true) {
             JOptionPane.showMessageDialog(this, "Patron Deleted");
             clearTable();
             displayPatronDetails();
         }else{
             JOptionPane.showMessageDialog(this, "Patron Deletion Failed");
+        }
         }
     }//GEN-LAST:event_rSMaterialButtonCircle2ActionPerformed
 
@@ -471,10 +474,11 @@ public class ManageVisitors extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+             UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(ManageVisitors.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);

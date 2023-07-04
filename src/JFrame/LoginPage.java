@@ -5,11 +5,16 @@
 package JFrame;
 
 import static JFrame.DBConnection.con;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import javax.swing.JOptionPane;
 import java.sql.ResultSet;
+import java.util.Scanner;
+import javax.swing.UIManager;
 
 
 /**
@@ -21,6 +26,14 @@ public class LoginPage extends javax.swing.JFrame {
     /**
      * Creates new form LoginPage
      */
+        static String password;
+
+    private static void byteToHex(String password) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    private static byte[] hash;
+    
+        String name;
     public LoginPage() {
         initComponents();
     }
@@ -88,9 +101,6 @@ public class LoginPage extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
-        rSMaterialButtonCircle1 = new rojerusan.RSMaterialButtonCircle();
-        rSMaterialButtonCircle2 = new rojerusan.RSMaterialButtonCircle();
-        jLabel17 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -99,11 +109,12 @@ public class LoginPage extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1180, 700));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(1180, 700));
 
         jPanel2.setBackground(new java.awt.Color(0, 102, 0));
         jPanel2.setMinimumSize(new java.awt.Dimension(1180, 700));
@@ -146,33 +157,6 @@ public class LoginPage extends javax.swing.JFrame {
         jLabel16.setForeground(new java.awt.Color(255, 153, 51));
         jLabel16.setText("Password");
 
-        rSMaterialButtonCircle1.setBackground(new java.awt.Color(255, 255, 51));
-        rSMaterialButtonCircle1.setForeground(new java.awt.Color(0, 102, 0));
-        rSMaterialButtonCircle1.setText("LOG IN");
-        rSMaterialButtonCircle1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rSMaterialButtonCircle1ActionPerformed(evt);
-            }
-        });
-
-        rSMaterialButtonCircle2.setBackground(new java.awt.Color(255, 153, 51));
-        rSMaterialButtonCircle2.setForeground(new java.awt.Color(0, 102, 0));
-        rSMaterialButtonCircle2.setText("SIGN UP");
-        rSMaterialButtonCircle2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rSMaterialButtonCircle2ActionPerformed(evt);
-            }
-        });
-
-        jLabel17.setFont(new java.awt.Font("Bahnschrift", 0, 24)); // NOI18N
-        jLabel17.setForeground(new java.awt.Color(255, 153, 51));
-        jLabel17.setText("  X");
-        jLabel17.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel17MouseClicked(evt);
-            }
-        });
-
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -209,6 +193,28 @@ public class LoginPage extends javax.swing.JFrame {
         jLabel10.setText("N.C.A LIBRARY");
         jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 100, -1, -1));
 
+        jButton1.setBackground(new java.awt.Color(255, 153, 0));
+        jButton1.setFont(new java.awt.Font("Forte", 0, 18)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(0, 102, 0));
+        jButton1.setText("SIGN UP");
+        jButton1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, null, new java.awt.Color(0, 102, 0), null, new java.awt.Color(0, 153, 51)));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setBackground(new java.awt.Color(255, 255, 51));
+        jButton2.setFont(new java.awt.Font("Forte", 0, 18)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(0, 102, 0));
+        jButton2.setText("LOG IN");
+        jButton2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, null, new java.awt.Color(0, 153, 51), null, new java.awt.Color(255, 153, 0)));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -217,44 +223,36 @@ public class LoginPage extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 748, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(64, 64, 64)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel8)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(64, 64, 64)
+                                .addComponent(jLabel12)
+                                .addGap(10, 10, 10)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel7)
-                                    .addComponent(jLabel8)))
+                                    .addComponent(jLabel9)
+                                    .addComponent(var_username, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
+                                .addComponent(jLabel14)
+                                .addGap(10, 10, 10)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addGap(32, 32, 32)
-                                        .addComponent(rSMaterialButtonCircle1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(53, 53, 53)
-                                        .addComponent(rSMaterialButtonCircle2, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jLabel12)
-                                        .addGap(10, 10, 10)
-                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel9)
-                                            .addComponent(var_username, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jLabel14)
-                                        .addGap(10, 10, 10)
-                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel16)
-                                            .addComponent(var_password, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                        .addGap(0, 44, Short.MAX_VALUE))))
+                                    .addComponent(jLabel16)
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(var_password, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                .addGap(0, 44, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(jLabel17)
-                .addGap(30, 30, 30)
+                .addGap(66, 66, 66)
                 .addComponent(jLabel7)
                 .addGap(29, 29, 29)
                 .addComponent(jLabel8)
@@ -276,12 +274,12 @@ public class LoginPage extends javax.swing.JFrame {
                         .addComponent(jLabel16)
                         .addGap(12, 12, 12)
                         .addComponent(var_password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(65, 65, 65)
+                .addGap(81, 81, 81)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rSMaterialButtonCircle1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(rSMaterialButtonCircle2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(332, 332, 332))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -307,24 +305,35 @@ public class LoginPage extends javax.swing.JFrame {
         
     }//GEN-LAST:event_var_usernameFocusLost
 
-    private void rSMaterialButtonCircle2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSMaterialButtonCircle2ActionPerformed
-        
-    }//GEN-LAST:event_rSMaterialButtonCircle2ActionPerformed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        SignupPage signup = new SignupPage();
+        signup.setVisible(true);
+        dispose();      
 
-    private void jLabel17MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MouseClicked
-        System.exit(0);
-    }//GEN-LAST:event_jLabel17MouseClicked
+    }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void rSMaterialButtonCircle1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSMaterialButtonCircle1ActionPerformed
-        if(validateLogin()){
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        LoginPage login = new LoginPage();
+        login.setVisible(true);
+        if(validateLogin() == true){
         login();
-    }
-    }//GEN-LAST:event_rSMaterialButtonCircle1ActionPerformed
+    }else{
+            if((name.equals(""))==false || (password.equals(""))==false){
+                JOptionPane.showMessageDialog(this, "Invalid Login");
+            }
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        
+        Scanner scanner = new Scanner(System.in);
+        
+        
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -332,10 +341,11 @@ public class LoginPage extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLo okAndFeel(info.getClassName());
+//                    break;
+//                }
+             UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(LoginPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -347,7 +357,6 @@ public class LoginPage extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(LoginPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -355,14 +364,36 @@ public class LoginPage extends javax.swing.JFrame {
             }
         });
     }
+    
+    public static byte[] getHash() throws NoSuchAlgorithmException{
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+        return hash = messageDigest.digest(password.getBytes(StandardCharsets.UTF_8));
+    }
+    
+    public static void byteToHex() throws NoSuchAlgorithmException{
+        byteToHex(getHash());
+}
+    public static String byteToHex(byte[] hash) {
+        StringBuffer hexString = new StringBuffer();
+        for (int i = 0; i < hash.length; i++) {
+            String hex = Integer.toHexString(255 & hash[i]);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        System.out.println(hexString);
+        return hexString.toString();
+    }   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -373,8 +404,6 @@ public class LoginPage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private rojerusan.RSMaterialButtonCircle rSMaterialButtonCircle1;
-    private rojerusan.RSMaterialButtonCircle rSMaterialButtonCircle2;
     private app.bolivia.swing.JCTextField var_password;
     private app.bolivia.swing.JCTextField var_username;
     // End of variables declaration//GEN-END:variables
